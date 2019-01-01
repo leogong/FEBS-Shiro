@@ -214,6 +214,11 @@
             <artifactId>jasypt-spring-boot-starter</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -309,6 +314,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <compilerArgs>
                         <!-- 开启此参数可通过反射获取方法的原始参数名，非以 args 开头 java1.8 有效,add by jyao-->
                         <arg>-parameters</arg>
