@@ -4,7 +4,7 @@ server:
     uri-encoding: utf-8
 spring:
   datasource:
-#    schema: init_h2.sql
+    schema: init_h2.sql
 #    data:
     druid:
       # 数据库访问配置, 使用druid数据源 

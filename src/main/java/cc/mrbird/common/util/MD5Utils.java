@@ -9,7 +9,7 @@ public class MD5Utils {
 
 	}
 
-	private static final String SALT = "mrbird";
+	private static final String SALT = "xxxxx";
 
 	private static final String ALGORITH_NAME = "md5";
 
@@ -22,6 +22,10 @@ public class MD5Utils {
 	public static String encrypt(String username, String pswd) {
 		return new SimpleHash(ALGORITH_NAME, pswd, ByteSource.Util.bytes(username.toLowerCase() + SALT),
 				HASH_ITERATIONS).toHex();
+	}
+
+	public static void main(String[] args) {
+		System.out.println(encrypt("hadfhksd","fRN^MA3LsYobBWX*7$K%"));
 	}
 
 }
