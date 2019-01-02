@@ -92,21 +92,21 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping("user/regist")
-    @ResponseBody
-    public ResponseBo regist(User user) {
-        try {
-            User result = this.userService.findByName(user.getUsername());
-            if (result != null) {
-                return ResponseBo.warn("该用户名已被使用！");
-            }
-            this.userService.registUser(user);
-            return ResponseBo.ok();
-        } catch (Exception e) {
-            log.error("注册失败", e);
-            return ResponseBo.error("注册失败，请联系网站管理员！");
-        }
-    }
+//    @RequestMapping("user/regist")
+//    @ResponseBody
+//    public ResponseBo regist(User user) {
+//        try {
+//            User result = this.userService.findByName(user.getUsername());
+//            if (result != null) {
+//                return ResponseBo.warn("该用户名已被使用！");
+//            }
+//            this.userService.registUser(user);
+//            return ResponseBo.ok();
+//        } catch (Exception e) {
+//            log.error("注册失败", e);
+//            return ResponseBo.error("注册失败，请联系网站管理员！");
+//        }
+//    }
 
     @Log("更换主题")
     @RequestMapping("user/theme")
