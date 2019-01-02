@@ -4,7 +4,8 @@ server:
     uri-encoding: utf-8
 spring:
   datasource:
-#    schema: /init_h2.sql
+#    schema: init_h2.sql
+#    data:
     druid:
       # 数据库访问配置, 使用druid数据源 
       db-type: com.alibaba.druid.pool.DruidDataSource
@@ -172,9 +173,9 @@ febs:
     # 密码加密算法
     algorithmName: MD5
     # 密码加密盐
-    passwordSalt: xxx
+    passwordSalt: xxxxx
     # 散列次数
-    hashIterations: 1
+    hashIterations: 2
   # 验证码
   validateCode:
     # 宽度，默认 146px
