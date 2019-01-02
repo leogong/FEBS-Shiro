@@ -5,7 +5,6 @@ import cc.mrbird.common.controller.BaseController;
 import cc.mrbird.common.domain.QueryRequest;
 import cc.mrbird.common.domain.ResponseBo;
 import cc.mrbird.common.util.FileUtil;
-import cc.mrbird.common.util.MD5Utils;
 import cc.mrbird.system.domain.User;
 import cc.mrbird.system.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -128,10 +127,11 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo addUser(User user, Long[] roles) {
         try {
-            if (ON.equalsIgnoreCase(user.getStatus()))
+            if (ON.equalsIgnoreCase(user.getStatus())) {
                 user.setStatus(User.STATUS_VALID);
-            else
+            } else {
                 user.setStatus(User.STATUS_LOCK);
+            }
             this.userService.addUser(user, roles);
             return ResponseBo.ok("新增用户成功！");
         } catch (Exception e) {
@@ -146,10 +146,11 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo updateUser(User user, Long[] rolesSelect) {
         try {
-            if (ON.equalsIgnoreCase(user.getStatus()))
+            if (ON.equalsIgnoreCase(user.getStatus())) {
                 user.setStatus(User.STATUS_VALID);
-            else
+            } else {
                 user.setStatus(User.STATUS_LOCK);
+            }
             this.userService.updateUser(user, rolesSelect);
             return ResponseBo.ok("修改用户成功！");
         } catch (Exception e) {
@@ -176,7 +177,7 @@ public class UserController extends BaseController {
     @ResponseBody
     public boolean checkPassword(String password) {
         User user = getCurrentUser();
-        String encrypt = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
+        String encrypt = userService.encryptPassword(user.getUsername(), password);
         return user.getPassword().equals(encrypt);
     }
 

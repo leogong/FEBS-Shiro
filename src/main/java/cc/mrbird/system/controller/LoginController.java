@@ -4,13 +4,16 @@ import cc.mrbird.common.annotation.Log;
 import cc.mrbird.common.config.FebsProperties;
 import cc.mrbird.common.controller.BaseController;
 import cc.mrbird.common.domain.ResponseBo;
-import cc.mrbird.common.util.MD5Utils;
 import cc.mrbird.common.util.vcode.Captcha;
 import cc.mrbird.common.util.vcode.GifCaptcha;
 import cc.mrbird.system.domain.User;
 import cc.mrbird.system.service.UserService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -57,12 +60,13 @@ public class LoginController extends BaseController {
             return ResponseBo.warn("验证码错误！");
         }
         // 密码 MD5 加密
-        password = MD5Utils.encrypt(username.toLowerCase(), password);
+        password = userService.encryptPassword(username, password);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
         try {
             Subject subject = getSubject();
-            if (subject != null)
+            if (subject != null) {
                 subject.logout();
+            }
             super.login(token);
             this.userService.updateLoginTime(username);
             return ResponseBo.ok();

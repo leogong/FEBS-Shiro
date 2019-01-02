@@ -19,6 +19,36 @@ public class ShiroProperties {
 
     private String unauthorizedUrl;
 
+    private String passwordSalt;
+
+    private Integer hashIterations;
+
+    private String algorithmName;
+
+    public String getAlgorithmName() {
+        return algorithmName;
+    }
+
+    public void setAlgorithmName(String algorithmName) {
+        this.algorithmName = algorithmName;
+    }
+
+    public Integer getHashIterations() {
+        return hashIterations;
+    }
+
+    public void setHashIterations(Integer hashIterations) {
+        this.hashIterations = hashIterations;
+    }
+
+    public String getPasswordSalt() {
+        return passwordSalt;
+    }
+
+    public void setPasswordSalt(String passwordSalt) {
+        this.passwordSalt = passwordSalt;
+    }
+
     public int getExpireIn() {
         return expireIn;
     }

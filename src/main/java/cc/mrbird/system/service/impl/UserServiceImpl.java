@@ -1,22 +1,8 @@
 package cc.mrbird.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import cc.mrbird.common.config.FebsProperties;
 import cc.mrbird.common.domain.QueryRequest;
-import org.apache.shiro.SecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import cc.mrbird.common.service.impl.BaseService;
-import cc.mrbird.common.util.MD5Utils;
 import cc.mrbird.system.dao.UserMapper;
 import cc.mrbird.system.dao.UserRoleMapper;
 import cc.mrbird.system.domain.User;
@@ -24,7 +10,22 @@ import cc.mrbird.system.domain.UserRole;
 import cc.mrbird.system.domain.UserWithRole;
 import cc.mrbird.system.service.UserRoleService;
 import cc.mrbird.system.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("userService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -40,6 +41,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private FebsProperties febsProperties;
 
     @Override
     public User findByName(String userName) {
@@ -66,7 +70,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setTheme(User.DEFAULT_THEME);
         user.setAvatar(User.DEFAULT_AVATAR);
         user.setSsex(User.SEX_UNKNOW);
-        user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
+        user.setPassword(encryptPassword(user.getUsername(), user.getPassword()));
         this.save(user);
         UserRole ur = new UserRole();
         ur.setUserId(user.getUserId());
@@ -90,7 +94,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setCrateTime(new Date());
         user.setTheme(User.DEFAULT_THEME);
         user.setAvatar(User.DEFAULT_AVATAR);
-        user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
+        user.setPassword(encryptPassword(user.getUsername(), user.getPassword()));
         this.save(user);
         setUserRoles(user, roles);
     }
@@ -142,7 +146,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         Example example = new Example(User.class);
         example.createCriteria().andCondition("username=", user.getUsername());
-        String newPassword = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
+        String newPassword = encryptPassword(user.getUsername(), password);
         user.setPassword(newPassword);
         this.userMapper.updateByExampleSelective(user, example);
     }
@@ -151,8 +155,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     public UserWithRole findById(Long userId) {
         List<UserWithRole> list = this.userMapper.findUserWithRole(userId);
         List<Long> roleList = list.stream().map(UserWithRole::getRoleId).collect(Collectors.toList());
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             return null;
+        }
         UserWithRole userWithRole = list.get(0);
         userWithRole.setRoleIds(roleList);
         return userWithRole;
@@ -171,6 +176,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         if (user.getDeptId() == null)
             user.setDeptId(0L);
         this.updateNotNull(user);
+    }
+
+
+    @Override
+    public String encryptPassword(String userName, String password) {
+        return new SimpleHash(febsProperties.getShiro().getAlgorithmName(), password,
+                ByteSource.Util.bytes(userName.toLowerCase() + febsProperties.getShiro().getPasswordSalt()),
+                febsProperties.getShiro().getHashIterations()).toHex();
     }
 
 }

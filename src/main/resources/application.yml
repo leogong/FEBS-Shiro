@@ -169,6 +169,12 @@ febs:
     logoutUrl: /logout
     # 未授权跳转 url
     unauthorizedUrl: /403
+    # 密码加密算法
+    algorithmName: MD5
+    # 密码加密盐
+    passwordSalt: xxx
+    # 散列次数
+    hashIterations: 1
   # 验证码
   validateCode:
     # 宽度，默认 146px
