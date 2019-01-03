@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     schema: init_h2.sql
-#    data:
+    #    data:
     druid:
       # 数据库访问配置, 使用druid数据源 
       db-type: com.alibaba.druid.pool.DruidDataSource
@@ -63,7 +63,9 @@ spring:
       filter:
         stat:
           log-slow-sql: true
-
+  profiles:
+    active:
+      dev
   redis:
     # Redis数据库索引（默认为0）
     database: 0
@@ -128,9 +130,9 @@ jasypt:
 
 mybatis:
   # type-aliases扫描路径
-  type-aliases-package: cc.mrbird.system.domain,cc.mrbird.job.domain
+  type-aliases-package: cc.mrbird.system.domain,cc.mrbird.job.domain,cc.mrbird.core.domain.entity
   # mapper xml实现扫描路径
-  mapper-locations: classpath:mapper/*/*.xml
+  mapper-locations: classpath:mybatis/mapper/*/*.xml
   configuration:
     jdbc-type-for-null: null
 
@@ -161,7 +163,7 @@ febs:
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-#    anonUrl: /css/**,/js/**,/fonts/**,/img/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**
+    #    anonUrl: /css/**,/js/**,/fonts/**,/img/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**
     anonUrl: /css/**,/js/**,/fonts/**,/img/**,/gifCode
     # 登录 url
     loginUrl: /login

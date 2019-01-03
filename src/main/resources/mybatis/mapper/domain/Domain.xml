@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.system.dao.DomainMapper">
+    <insert id="insert" parameterType="DomainDO">
+        INSERT INTO `domain` (gmt_create, gmt_modified, domain, price, `status`, product_type, end_time, prefix_length,
+                              suffix_length)
+        VALUES (#{gmtCreate}, #{gmtModified}, #{domain}, #{price}, #{status}, #{productType}, #{endTime},
+                #{prefixLength},
+                #{suffixLength})
+    </insert>
+
+    <update id="update" parameterType="DomainDO">
+        UPDATE `domain` SET gmt_modified = now()
+        <if test="price != null">
+            ,price = #{price}
+        </if>
+        <if test="status != null">
+            ,`status` = #{status}
+        </if>
+        <if test="productType != null">
+            ,product_type = #{productType}
+        </if>
+        <if test="endTime != null">
+            ,end_time = #{endTime}
+        </if>
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="domain != null">
+                and domain = #{domain}
+            </if>
+        </where>
+    </update>
+
+
+    <select id="select" parameterType="DomainQuery" resultType="DomainDO">
+        SELECT
+        id,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        domain,
+        price,
+        `status`,
+        product_type AS productType,
+        end_time as endTime,
+        prefix_length as prefixLength,
+        suffix_length as suffixLength
+        FROM domain
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="domain != null">
+                and domain = #{domain}
+            </if>
+            <if test="price != null">
+                and price &lt;= #{price}
+            </if>
+            <if test="prefixLength != null">
+                and prefix_length &lt;= #{prefixLength}
+            </if>
+            <if test="status != null">
+                and `status` = #{status}
+            </if>
+            <if test="suffix != null">
+                <bind name="pattern" value="'%.' + suffix"/>
+                and domain like #{pattern}
+            </if>
+            <if test="endTimeFrom != null">
+                and end_time &gt;= #{endTimeFrom}
+            </if>
+            <if test="orderByColumn != null">
+                order by ${orderByColumn} ${direction}
+            </if>
+            <if test="offset != null">
+                limit #{offset} ,#{pageSize}
+            </if>
+        </where>
+    </select>
+
+    <select id="count" parameterType="DomainQuery" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM domain
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="domain != null">
+                and domain = #{domain}
+            </if>
+            <if test="price != null">
+                and price &lt;= #{price}
+            </if>
+            <if test="prefixLength != null">
+                and prefix_length &lt;= #{prefixLength}
+            </if>
+            <if test="status != null">
+                and `status` = #{status}
+            </if>
+            <if test="suffix != null">
+                <bind name="pattern" value="'%.' + suffix"/>
+                and domain like #{pattern}
+            </if>
+            <if test="endTimeFrom != null">
+                and end_time &gt;= #{endTimeFrom}
+            </if>
+        </where>
+    </select>
+
+</mapper>
